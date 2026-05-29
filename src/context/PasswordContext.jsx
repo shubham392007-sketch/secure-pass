@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 
 const PasswordContext = createContext();
 
@@ -17,6 +17,21 @@ export const PasswordProvider = ({ children }) => {
     } catch { return []; }
   });
 
+  const [settings, setSettings] = useState(() => {
+    try {
+      const saved = localStorage.getItem('securepass_settings');
+      return saved ? JSON.parse(saved) : {
+        length: 16,
+        uppercase: true,
+        lowercase: true,
+        numbers: true,
+        symbols: true,
+        excludeSimilar: false,
+        mode: 'random'
+      };
+    } catch { return { length: 16, uppercase: true, lowercase: true, numbers: true, symbols: true, excludeSimilar: false, mode: 'random' }; }
+  });
+
   useEffect(() => {
     localStorage.setItem('securepass_history', JSON.stringify(history));
   }, [history]);
@@ -24,6 +39,14 @@ export const PasswordProvider = ({ children }) => {
   useEffect(() => {
     localStorage.setItem('securepass_favorites', JSON.stringify(favorites));
   }, [favorites]);
+
+  useEffect(() => {
+    localStorage.setItem('securepass_settings', JSON.stringify(settings));
+  }, [settings]);
+
+  const updateSettings = (newSettings) => {
+    setSettings(prev => ({ ...prev, ...newSettings }));
+  };
 
   const addToHistory = (password, category = 'Universal') => {
     setHistory(prev => [{ id: Date.now().toString(), password, category, timestamp: new Date().toISOString() }, ...prev].slice(0, 100));
@@ -48,7 +71,7 @@ export const PasswordProvider = ({ children }) => {
   const clearHistory = () => setHistory([]);
 
   return (
-    <PasswordContext.Provider value={{ history, favorites, addToHistory, toggleFavorite, deleteFromHistory, clearHistory }}>
+    <PasswordContext.Provider value={{ history, favorites, settings, updateSettings, addToHistory, toggleFavorite, deleteFromHistory, clearHistory }}>
       {children}
     </PasswordContext.Provider>
   );

@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { Code2, Briefcase, Camera, ArrowUpRight } from 'lucide-react';
 

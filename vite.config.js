@@ -7,6 +7,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      includeAssets: ['favicon.svg', 'icons.svg'],
       manifest: {
         name: 'SecurePass - Password Generator',
         short_name: 'SecurePass',
@@ -19,8 +20,16 @@ export default defineConfig({
             src: 'favicon.svg',
             sizes: '192x192',
             type: 'image/svg+xml'
+          },
+          {
+            src: 'favicon.svg',
+            sizes: '512x512',
+            type: 'image/svg+xml'
           }
         ]
+      },
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg}']
       }
     })
   ],
